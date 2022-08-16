@@ -1,5 +1,4 @@
-from Screens import FirstScreen
+from Screens import ventana_principal
 
 if __name__ == "__main__":
-   
-    FirstScreen()
+    ventana_principal()
