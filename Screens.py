@@ -1,11 +1,15 @@
 
 from ast import arg
+from cgitb import text
+from sre_parse import State
 
 from  tkinter import *
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog as FileDialog
+from tkinter.font import BOLD
+from curso import *
 
 
 try:
@@ -13,6 +17,9 @@ try:
     windll.shcore.SetProcessDpiAwareness(1)
 except:
     pass
+
+
+
 
 
 # Main Screen
@@ -204,22 +211,67 @@ class AgregarCurso(tk.Frame):
         Label(self, text="Créditos", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=400)
         Label(self, text="Estado", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=470)
         
-        codigo= ttk.Entry(self).place(x=325,y=50, width=500,height=35)
-        nombre= ttk.Entry(self).place(x=325,y=120, width=500,height=35)
-        prerrequisito= ttk.Entry(self).place(x=325,y=190, width=500,height=35)
-        obligatorio= ttk.Entry(self).place(x=325,y=260, width=500,height=35)
-        semestre= ttk.Entry(self).place(x=325,y=330, width=500,height=35)
-        creditos= ttk.Entry(self).place(x=325,y=400, width=500,height=35)
-        estado= ttk.Entry(self).place(x=325,y=470, width=500,height=35)
+
+
+        self.tk_codigo =tk.StringVar()
+        self.tk_nombre =tk.StringVar()
+        self.tk_prerrequisitos =tk.StringVar()
+        self.tk_obligatorio =tk.StringVar()
+        self.tk_semeste =tk.StringVar()
+        self.tk_creditos =tk.StringVar()
+        self.tk_estado=tk.StringVar()
+
+
+
+        self.codigo= ttk.Entry(self,textvariable=self.tk_codigo).place(x=325,y=50, width=500,height=35)
+        self.nombre= ttk.Entry(self,textvariable=self.tk_nombre).place(x=325,y=120, width=500,height=35)
+        self.prerrequisito= ttk.Entry(self,textvariable=self.tk_prerrequisitos).place(x=325,y=190, width=500,height=35)
+        self.obligatorio= ttk.Entry(self,textvariable=self.tk_obligatorio).place(x=325,y=260, width=500,height=35)
+        self.semestre= ttk.Entry(self,textvariable=self.tk_semeste).place(x=325,y=330, width=500,height=35)
+        self.creditos= ttk.Entry(self,textvariable=self.tk_creditos).place(x=325,y=400, width=500,height=35)
+        self.estado= ttk.Entry(self,textvariable=self.tk_estado).place(x=325,y=470, width=500,height=35)
         
 
-        Button(self, text="Agregar" , font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
+        Button(self, text="Agregar" ,command=self.agregar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
         Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=500, y=550)
         
         
 
 
+    def agregar(self):
         
+        curso=Curso(self.tk_codigo.get(),self.tk_nombre.get(),self.tk_prerrequisitos.get(),
+        self.tk_obligatorio.get(),self.tk_semeste.get(),self.tk_creditos.get(),self.tk_estado.get())
+        
+
+        
+        pos=-1
+        
+        
+        codigo=self.tk_codigo.get()
+
+        for dato in cursos:
+            print(dato.getCodigo())
+            if codigo==dato.getCodigo():
+                pos = cursos.index(dato)
+        if pos!=-1:
+            cursos.pop(pos)
+         
+        cursos.append(curso)
+        titulo = "Agregar Curso"
+        mensaje = 'Se ha agregado el curso'
+        messagebox.showinfo(titulo, mensaje)
+        self.tk_codigo.set('')
+        self.tk_nombre.set('')
+        self.tk_prerrequisitos.set('')
+        self.tk_obligatorio.set('')
+        self.tk_semeste.set('')
+        self.tk_creditos.set('')
+        self.tk_estado.set('')
+           
+
+        
+
     def regresar(self):
          self.root.destroy()
          ventana_gestionar_cursos()
@@ -257,20 +309,59 @@ class MostrarCurso(tk.Frame):
         Label(self, text="Créditos", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=400)
         Label(self, text="Estado", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=470)
         
-        codigo= ttk.Entry(self).place(x=325,y=50, width=500,height=35)
-        nombre= ttk.Entry(self, state='disabled').place(x=325,y=120, width=500,height=35)
-        prerrequisito= ttk.Entry(self, state='disabled').place(x=325,y=190, width=500,height=35)
-        obligatorio= ttk.Entry(self, state='disabled').place(x=325,y=260, width=500,height=35)
+
+        self.tk_codigo =tk.StringVar()
+        self.tk_nombre =tk.StringVar()
+        self.tk_prerrequisitos =tk.StringVar()
+        self.tk_obligatorio =tk.StringVar()
+        self.tk_semeste =tk.StringVar()
+        self.tk_creditos =tk.StringVar()
+        self.tk_estado=tk.StringVar()
+
         
-        semestre= ttk.Entry(self, state='disabled').place(x=325,y=330, width=500,height=35)
-        creditos= ttk.Entry(self, state='disabled').place(x=325,y=400, width=500,height=35)
-        estado= ttk.Entry(self, state='disabled').place(x=325,y=470, width=500,height=35)
+        self.codigo= ttk.Entry(self,textvariable=self.tk_codigo).place(x=325,y=50, width=500,height=35)
+        self.nombre= ttk.Entry(self,textvariable=self.tk_nombre,state='disabled').place(x=325,y=120, width=500,height=35)
+        self.prerrequisito= ttk.Entry(self,textvariable=self.tk_prerrequisitos,state='disabled').place(x=325,y=190, width=500,height=35)
+        self.obligatorio= ttk.Entry(self,textvariable=self.tk_obligatorio,state='disabled').place(x=325,y=260, width=500,height=35)
+        self.semestre= ttk.Entry(self,textvariable=self.tk_semeste,state='disabled').place(x=325,y=330, width=500,height=35)
+        self.creditos= ttk.Entry(self,textvariable=self.tk_creditos,state='disabled').place(x=325,y=400, width=500,height=35)
+        self.estado= ttk.Entry(self,textvariable=self.tk_estado,state='disabled').place(x=325,y=470, width=500,height=35)
+
+        
         
 
-        Button(self, text="Mostrar" , font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
+        Button(self, text="Mostrar" , command=self.mostrar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
         Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=500, y=550)
        
     
+    def mostrar(self):
+        pos = -1
+        
+        codigo=self.tk_codigo.get()
+
+        for dato in cursos:
+            print(dato.getCodigo())
+            if codigo==dato.getCodigo():
+                pos = cursos.index(dato)
+        
+        if pos==-1:
+            titulo = "Mostrar Curso"
+            mensaje = 'No se ha encontrado el curso'
+            messagebox.showerror(titulo, mensaje)
+        else:
+            self.tk_nombre.set(cursos[pos].getNombre())
+            self.tk_codigo.set(cursos[pos].getCodigo())
+            
+            self.tk_prerrequisitos.set(cursos[pos].getPrerrequisitos())
+            self.tk_obligatorio.set(cursos[pos].getObligatorio())
+            self.tk_semeste.set(cursos[pos].getSemestre())
+            self.tk_creditos.set(cursos[pos].getCreditos())
+            self.tk_estado.set(cursos[pos].getEstado())
+            
+
+
+        
+
     def regresar(self):
          self.root.destroy()
          ventana_gestionar_cursos()
@@ -308,21 +399,83 @@ class EliminarCurso(tk.Frame):
         Label(self, text="Créditos", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=400)
         Label(self, text="Estado", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=470)
         
-        codigo= ttk.Entry(self).place(x=325,y=50, width=200,height=35)
-        nombre= ttk.Entry(self, state='disabled').place(x=325,y=120, width=500,height=35)
-        prerrequisito= ttk.Entry(self, state='disabled').place(x=325,y=190, width=500,height=35)
-        obligatorio= ttk.Entry(self, state='disabled').place(x=325,y=260, width=500,height=35)
-        
-        semestre= ttk.Entry(self, state='disabled').place(x=325,y=330, width=500,height=35)
-        creditos= ttk.Entry(self, state='disabled').place(x=325,y=400, width=500,height=35)
-        estado= ttk.Entry(self, state='disabled').place(x=325,y=470, width=500,height=35)
+
+
+        self.tk_codigo =tk.StringVar()
+        self.tk_nombre =tk.StringVar()
+        self.tk_prerrequisitos =tk.StringVar()
+        self.tk_obligatorio =tk.StringVar()
+        self.tk_semeste =tk.StringVar()
+        self.tk_creditos =tk.StringVar()
+        self.tk_estado=tk.StringVar()
+
+        self.codigo= ttk.Entry(self,textvariable=self.tk_codigo).place(x=325,y=50, width=200,height=35)
+        self.nombre= ttk.Entry(self,textvariable=self.tk_nombre, state='disabled').place(x=325,y=120, width=500,height=35)
+        self.prerrequisito= ttk.Entry(self,textvariable=self.tk_prerrequisitos, state='disabled').place(x=325,y=190, width=500,height=35)
+        self.obligatorio= ttk.Entry(self,textvariable=self.tk_obligatorio, state='disabled').place(x=325,y=260, width=500,height=35)
+        self.semestre= ttk.Entry(self,textvariable=self.tk_semeste, state='disabled').place(x=325,y=330, width=500,height=35)
+        self.creditos= ttk.Entry(self,textvariable=self.tk_creditos, state='disabled').place(x=325,y=400, width=500,height=35)
+        self.estado= ttk.Entry(self,textvariable=self.tk_estado, state='disabled').place(x=325,y=470, width=500,height=35)
         
 
-        Button(self, text="Buscar" , font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=600, y=50)
-        Button(self, text="Eliminar" , font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
+        Button(self, text="Buscar" ,command=self.mostrar, font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=600, y=50)
+        Button(self, text="Eliminar" ,command=self.elimnar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
         Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=500, y=550)
         
-    
+    def mostrar(self):
+        pos = -1
+        
+        codigo=self.tk_codigo.get()
+
+        for dato in cursos:
+            print(dato.getCodigo())
+            if codigo==dato.getCodigo():
+                pos = cursos.index(dato)
+        
+        if pos==-1:
+            titulo = "Buscar Curso"
+            mensaje = 'No se ha encontrado el curso'
+            messagebox.showerror(titulo, mensaje)
+            self.tk_codigo.set('')
+            
+            
+        else:
+            self.tk_nombre.set(cursos[pos].getNombre())
+            self.tk_codigo.set(cursos[pos].getCodigo())
+            
+            self.tk_prerrequisitos.set(cursos[pos].getPrerrequisitos())
+            self.tk_obligatorio.set(cursos[pos].getObligatorio())
+            self.tk_semeste.set(cursos[pos].getSemestre())
+            self.tk_creditos.set(cursos[pos].getCreditos())
+            self.tk_estado.set(cursos[pos].getEstado())
+
+    def elimnar(self):
+        pos = -1
+        
+        codigo=self.tk_codigo.get()
+
+        for dato in cursos:
+            print(dato.getCodigo())
+            if codigo==dato.getCodigo():
+                pos = cursos.index(dato)
+        if pos!=-1:
+            cursos.pop(pos)
+            titulo = "Eliminar Curso"
+            mensaje = 'Se ha eliminado el curso'
+            messagebox.showinfo(titulo, mensaje)
+            self.tk_codigo.set('')
+            self.tk_nombre.set('')
+            self.tk_prerrequisitos.set('')
+            self.tk_obligatorio.set('')
+            self.tk_semeste.set('')
+            self.tk_creditos.set('')
+            self.tk_estado.set('')
+        else:
+            titulo = "Buscar Curso"
+            mensaje = 'No se ha encontrado el curso'
+            messagebox.showerror(titulo, mensaje)
+
+
     def regresar(self):
          self.root.destroy()
          ventana_gestionar_cursos()
@@ -349,6 +502,7 @@ class EditarCurso(tk.Frame):
         self.config( bg='#a6bdae')
         self.pack(padx=25,pady=20)
         self.Ventana()
+        self.deshabilitar()
 
     
     def Ventana(self):
@@ -360,20 +514,81 @@ class EditarCurso(tk.Frame):
         Label(self, text="Créditos", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=400)
         Label(self, text="Estado", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=470)
         
-        codigo= ttk.Entry(self).place(x=325,y=50, width=200,height=35)
-        nombre= ttk.Entry(self).place(x=325,y=120, width=500,height=35)
-        prerrequisito= ttk.Entry(self).place(x=325,y=190, width=500,height=35)
-        obligatorio= ttk.Entry(self).place(x=325,y=260, width=500,height=35)
-        
-        semestre= ttk.Entry(self).place(x=325,y=330, width=500,height=35)
-        creditos= ttk.Entry(self).place(x=325,y=400, width=500,height=35)
-        estado= ttk.Entry(self).place(x=325,y=470, width=500,height=35)
+
+        self.tk_codigo =tk.StringVar()
+        self.tk_nombre =tk.StringVar()
+        self.tk_prerrequisitos =tk.StringVar()
+        self.tk_obligatorio =tk.StringVar()
+        self.tk_semeste =tk.StringVar()
+        self.tk_creditos =tk.StringVar()
+        self.tk_estado=tk.StringVar()
+
+        self.codigo= ttk.Entry(self,textvariable=self.tk_codigo)
+        self.codigo.place(x=325,y=50, width=200,height=35)
+        self.nombre= ttk.Entry(self,textvariable=self.tk_nombre)
+        self.nombre.place(x=325,y=120, width=500,height=35)
+        self.prerrequisito= ttk.Entry(self,textvariable=self.tk_prerrequisitos)
+        self.prerrequisito.place(x=325,y=190, width=500,height=35)
+        self.obligatorio= ttk.Entry(self,textvariable=self.tk_obligatorio)
+        self.obligatorio.place(x=325,y=260, width=500,height=35)
+        self.semestre= ttk.Entry(self,textvariable=self.tk_semeste)
+        self.semestre.place(x=325,y=330, width=500,height=35)
+        self.creditos= ttk.Entry(self,textvariable=self.tk_creditos)
+        self.creditos.place(x=325,y=400, width=500,height=35)
+        self.estado= ttk.Entry(self,textvariable=self.tk_estado)
+        self.estado.place(x=325,y=470, width=500,height=35)
         
 
-        Button(self, text="Buscar" , font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=600, y=50)
+
+       
+
+        Button(self, text="Buscar" ,command=self.buscar, font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=600, y=50)
         Button(self, text="Editar" , font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
         Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=500, y=550)
         
+    def buscar(self):
+        pos = -1
+        
+        codigo=self.tk_codigo.get()
+
+        for dato in cursos:
+            print(dato.getCodigo())
+            if codigo==dato.getCodigo():
+                pos = cursos.index(dato)
+        
+        if pos==-1:
+            titulo = "Buscar Curso"
+            mensaje = 'No se ha encontrado el curso'
+            messagebox.showerror(titulo, mensaje)
+            self.tk_codigo.set('')
+            
+            
+        else:
+            
+            
+            self.tk_nombre.set(cursos[pos].getNombre())
+            self.tk_codigo.set(cursos[pos].getCodigo())
+            self.tk_prerrequisitos.set(cursos[pos].getPrerrequisitos())
+            self.tk_obligatorio.set(cursos[pos].getObligatorio())
+            self.tk_semeste.set(cursos[pos].getSemestre())
+            self.tk_creditos.set(cursos[pos].getCreditos())
+            self.tk_estado.set(cursos[pos].getEstado())
+
+            self.nombre.config(state='normal')
+            self.prerrequisito.config(state='normal')
+            self.obligatorio.config(state='normal')
+            self.semestre.config(state='normal')
+            self.creditos.config(state='normal')
+            self.estado.config(state='normal')
+
+    def deshabilitar(self):
+        self.nombre.configure(state='disabled')
+        self.prerrequisito.configure(state='disabled')
+        self.obligatorio.configure(state='disabled')
+        self.semestre.configure(state='disabled')
+        self.creditos.configure(state='disabled')
+        self.estado.configure(state='disabled')
+            
 
     
     def regresar(self):
@@ -441,29 +656,15 @@ class ListarCurso(tk.Frame):
         tabla.heading('#1',text='Nombre')   
         tabla.heading('#2',text='Prerrequisitos')
         tabla.heading('#3',text='Obligatorio')
-        tabla.heading('#4',text='Semesttre')
+        tabla.heading('#4',text='Semestre')
         tabla.heading('#5',text='Créditos')
         tabla.heading('#6',text='Estado')
         ## AQUI SE MANDA A LLAMAR A LA FUNCION QUE NOS DEVUELVE TODOS LOS CURSOS
+        for dato in cursos:
+            tabla.insert("",END, text=dato.getCodigo(), values=(dato.getNombre(),dato.getPrerrequisitos(),
+            dato.getObligatorio(),dato.getSemestre(),dato.getCreditos(),dato.getEstado()))
         
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 1', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
-        tabla.insert("",END, text='Carne 132323', values=('Nombre 1', 'Apellido 1', 'Edad 1','-1','si','Mate'))
+        
 
         boton_salir = tk.Button(self,text="Regresar" ,command=self.regresar)
         boton_salir.config(width=20, font=('Arial', 12,"bold"), fg= "#000000", bg='#c7cc00',cursor='hand2')
@@ -479,7 +680,7 @@ class ListarCurso(tk.Frame):
 def ventana_conteo_creditos():
     root= tk.Tk()
     root.title('Conteo de Creditos')
-    root.geometry('900x700+500+100')
+    root.geometry('800x750+500+100')
     root.configure(bg='#20001a')
     root.resizable(0,0)
     app = ConteoCreditos(root = root)
@@ -490,7 +691,7 @@ def ventana_conteo_creditos():
 
 class ConteoCreditos(tk.Frame):
     def __init__(self, root = None):
-        super().__init__(root, width=900, height=700)
+        super().__init__(root, width=800, height=750)
         self.root = root
         self.pack()
         self.config( bg='#a6bdae')
@@ -500,28 +701,62 @@ class ConteoCreditos(tk.Frame):
     
     def Ventana(self):
         Label(self, text="Créditos aprobados:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=50)
-        Label(self, text="Nombre", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=120)
-        Label(self, text="Créditos cursando:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=190)
-        Label(self, text="Créditos pendientes:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=260)
-        Label(self, text="Semestre", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=330)
-        Label(self, text="Créditos", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=400)
-        Label(self, text="Estado", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=470)
+        Label(self, text="Créditos cursando:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=120)
+        Label(self, text="Créditos pendientes:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=190)
+        Label(self, text="Créditos hasta semestre N:", font=('Times New Roman',15), fg='white', bg='#00251a', width=25).place(x=80, y=280)
+        Label(self, text="Créditos del semestre:", font=('Times New Roman',15), fg='white', bg='#00251a', width=20).place(x=80, y=430)
+        Label(self, text="Semestre:", font=('Times New Roman',15), fg='white', bg='#00251a', width=10).place(x=80, y=340)
+        Label(self, text="Semestre:", font=('Times New Roman',15), fg='white', bg='#00251a', width=10).place(x=80, y=490)
         
-        codigo= ttk.Entry(self).place(x=325,y=50, width=200,height=35)
-        nombre= ttk.Entry(self).place(x=325,y=120, width=500,height=35)
-        prerrequisito= ttk.Entry(self).place(x=325,y=190, width=500,height=35)
-        obligatorio= ttk.Entry(self).place(x=325,y=260, width=500,height=35)
         
-        semestre= ttk.Entry(self).place(x=325,y=330, width=500,height=35)
-        creditos= ttk.Entry(self).place(x=325,y=400, width=500,height=35)
-        estado= ttk.Entry(self).place(x=325,y=470, width=500,height=35)
+        self.creditos_aprobados = tk.StringVar()
+        self.creditos_aprobados.set("45 ")
+        self.label_aprobados = tk.Label(self, textvariable=self.creditos_aprobados,state='disabled')
+        self.label_aprobados.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_aprobados.place(x=325,y=50)
+
+        self.creditos_cursando = tk.StringVar()
+        self.creditos_cursando.set("45 ")
+        self.label_cursando = tk.Label(self, textvariable=self.creditos_cursando,state='disabled')
+        self.label_cursando.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_cursando.place(x=325,y=120)
+
+        self.creditos_pendientes = tk.StringVar()
+        self.creditos_pendientes.set("77 ")
+        self.label_pendiente = tk.Label(self, textvariable=self.creditos_pendientes,state='disabled')
+        self.label_pendiente.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_pendiente.place(x=325,y=190)
+
+        self.Str_creditos_hasta = tk.StringVar()
+        self.Str_creditos_hasta.set("77 ")
+        self.label_creditos_hasta = tk.Label(self, textvariable=self.Str_creditos_hasta,state='disabled')
+        self.label_creditos_hasta.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_creditos_hasta.place(x=500,y=280)
+
+        self.creditos_del_semestre = tk.StringVar()
+        self.creditos_del_semestre.set("77 ")
+        self.label_cdelsemestre = tk.Label(self, textvariable=self.creditos_del_semestre,state='disabled')
+        self.label_cdelsemestre.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_cdelsemestre.place(x=500,y=430)
+
+
+        # self.hasta_semestr=tk.StringVar()
+        self.creditos_hastasemsetre= Spinbox(self, from_=0,to=10,state='readonly',wrap=True)
+        self.creditos_hastasemsetre.configure(font=('Times New Roman',15),width=10)
+        self.creditos_hastasemsetre.place(x=300,y=340)
+
+        self.creditos_delsemsetre= Spinbox(self, from_=0,to=10,state='readonly',wrap=True)
+        self.creditos_delsemsetre.configure(font=('Times New Roman',15),width=10)
+        self.creditos_delsemsetre.place(x=300,y=490)
         
 
-        Button(self, text="Buscar" , font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=600, y=50)
-        Button(self, text="Editar" , font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
-        Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=500, y=550)
-        
 
+        
+        Button(self, text="Contar"  ,font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=500, y=340)
+        Button(self, text="Contar"  ,font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=500, y=490)
+        Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=40, y=600)
+        
+    
     
     def regresar(self):
          self.root.destroy()
