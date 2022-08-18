@@ -1,3 +1,5 @@
+from tkinter import messagebox
+
 class Curso:
 
     def __init__(self, codigo, nombre, prerrequisitos, obligatorio, semestre, creditos, estado):
@@ -55,4 +57,33 @@ class Curso:
 
 cursos=[]
 
-
+def Lectura(ruta):
+        try:
+            objeto = open(ruta,'r+',encoding='utf-8')
+            lineas = objeto.readlines()
+            objeto.close()
+        except:
+            pass
+        
+        for linea in lineas:
+            pos=-1
+            try:
+            
+                data = linea.split(',') # Devuelve una lista
+                curso = Curso(data[0], data[1], data[2], data[3], data[4],data[5],data[6].rstrip('\n'))
+            except:
+                continue
+            # cursos.append(curso)
+            for dato in cursos:
+                if curso.getCodigo()==dato.getCodigo():
+                 pos = cursos.index(dato)
+            if pos!=-1:
+                cursos.pop(pos)
+            cursos.append(curso)
+        titulo = "Agregar Curso"
+        mensaje = 'Se han agregado los cursos'
+        messagebox.showinfo(titulo, mensaje)
+        
+            
+        
+        return cursos

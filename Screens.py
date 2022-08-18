@@ -106,14 +106,16 @@ class CargarArchivo(tk.Frame):
         self.lable_ruta.config(font=('Times New Roman',15), fg='white', bg='#00251a', width=15)
         self.lable_ruta.place(x=80, y=50)
         
-        Button(self, text="Seleccionar" , font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=250)
+        ingresar_ruta =tk.StringVar()
+        ruta= ttk.Entry(self,textvariable=ingresar_ruta).place(x=80,y=120, width=540,height=35)
+
+        Button(self, text="Seleccionar" ,command= lambda:Lectura(ingresar_ruta.get()), font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=250)
         Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=500, y=250)
         
         Button(self, text="Buscar", command= lambda: ingresar_ruta.set(self.abrir()),font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=639, y=120)
         
         
-        ingresar_ruta =tk.StringVar()
-        ruta= ttk.Entry(self,textvariable=ingresar_ruta).place(x=80,y=120, width=540,height=35)
+
 
     def regresar(self):
         self.root.destroy()
@@ -256,7 +258,7 @@ class AgregarCurso(tk.Frame):
                 pos = cursos.index(dato)
         if pos!=-1:
             cursos.pop(pos)
-         
+        
         cursos.append(curso)
         titulo = "Agregar Curso"
         mensaje = 'Se ha agregado el curso'
@@ -340,7 +342,7 @@ class MostrarCurso(tk.Frame):
         codigo=self.tk_codigo.get()
 
         for dato in cursos:
-            print(dato.getCodigo())
+            # print(dato.getCodigo())
             if codigo==dato.getCodigo():
                 pos = cursos.index(dato)
         
@@ -428,7 +430,7 @@ class EliminarCurso(tk.Frame):
         codigo=self.tk_codigo.get()
 
         for dato in cursos:
-            print(dato.getCodigo())
+            
             if codigo==dato.getCodigo():
                 pos = cursos.index(dato)
         
@@ -552,7 +554,7 @@ class EditarCurso(tk.Frame):
         codigo=self.tk_codigo.get()
 
         for dato in cursos:
-            print(dato.getCodigo())
+           
             if codigo==dato.getCodigo():
                 pos = cursos.index(dato)
         
@@ -642,13 +644,13 @@ class ListarCurso(tk.Frame):
         tabla.configure(yscrollcommand=scroll.set)
 
         
-        tabla.column('#0', width = 150, anchor=CENTER)
-        tabla.column('#1', width = 150, anchor = CENTER)
-        tabla.column('#2', width = 150, anchor = CENTER)
-        tabla.column('#3', width = 150, anchor = CENTER)
-        tabla.column('#4', width = 150, anchor = CENTER)
-        tabla.column('#5', width = 150, anchor = CENTER)
-        tabla.column('#6', width = 150, anchor = CENTER)
+        tabla.column('#0', width = 110, anchor=CENTER)
+        tabla.column('#1', width = 240, anchor = CENTER)
+        tabla.column('#2', width = 170, anchor = CENTER)
+        tabla.column('#3', width = 120, anchor = CENTER)
+        tabla.column('#4', width = 120, anchor = CENTER)
+        tabla.column('#5', width = 120, anchor = CENTER)
+        tabla.column('#6', width = 120, anchor = CENTER)
 
        
 
