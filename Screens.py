@@ -545,7 +545,7 @@ class EditarCurso(tk.Frame):
        
 
         Button(self, text="Buscar" ,command=self.buscar, font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=600, y=50)
-        Button(self, text="Editar" , font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
+        Button(self, text="Editar" ,command=self.editar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=100, y=550)
         Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=500, y=550)
         
     def buscar(self):
@@ -583,6 +583,47 @@ class EditarCurso(tk.Frame):
             self.creditos.config(state='normal')
             self.estado.config(state='normal')
 
+
+    def editar(self):
+        pos = -1
+        
+        codigo=self.tk_codigo.get()
+
+        for dato in cursos:
+           
+            if codigo==dato.getCodigo():
+                pos = cursos.index(dato)
+        
+        if pos==-1:
+            titulo = "Editar Curso"
+            mensaje = 'No se ha encontrado el curso'
+            messagebox.showerror(titulo, mensaje)
+            self.tk_codigo.set('')
+            
+            
+        else:
+            cursos[pos].setNombre(self.tk_nombre.get())
+            cursos[pos].setPrerrequisitos(self.tk_prerrequisitos.get())
+            cursos[pos].setObligatorio(self.tk_obligatorio.get())
+            cursos[pos].setSemestre(self.tk_semeste.get())
+            cursos[pos].setCreditos(self.tk_creditos.get())
+            cursos[pos].setEstado(self.tk_estado.get())
+            
+            self.tk_nombre.set('')
+            self.tk_codigo.set('')
+            self.tk_prerrequisitos.set('')
+            self.tk_obligatorio.set('')
+            self.tk_semeste.set('')
+            self.tk_creditos.set('')
+            self.tk_estado.set('')      
+            self.deshabilitar()
+            titulo = "Editar Curso"
+            mensaje = 'Se ha editado el curso'
+            messagebox.showinfo(titulo, mensaje)
+
+
+
+
     def deshabilitar(self):
         self.nombre.configure(state='disabled')
         self.prerrequisito.configure(state='disabled')
@@ -591,7 +632,7 @@ class EditarCurso(tk.Frame):
         self.creditos.configure(state='disabled')
         self.estado.configure(state='disabled')
             
-
+    
     
     def regresar(self):
          self.root.destroy()
@@ -682,7 +723,8 @@ class ListarCurso(tk.Frame):
 def ventana_conteo_creditos():
     root= tk.Tk()
     root.title('Conteo de Creditos')
-    root.geometry('800x750+500+100')
+    root.geometry('800x850+500+90')
+    # root.geometry('800x750+500+100')
     root.configure(bg='#20001a')
     root.resizable(0,0)
     app = ConteoCreditos(root = root)
@@ -693,7 +735,7 @@ def ventana_conteo_creditos():
 
 class ConteoCreditos(tk.Frame):
     def __init__(self, root = None):
-        super().__init__(root, width=800, height=750)
+        super().__init__(root, width=800, height=850)
         self.root = root
         self.pack()
         self.config( bg='#a6bdae')
@@ -705,63 +747,146 @@ class ConteoCreditos(tk.Frame):
         Label(self, text="Créditos aprobados:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=50)
         Label(self, text="Créditos cursando:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=120)
         Label(self, text="Créditos pendientes:", font=('Times New Roman',15), fg='white', bg='#00251a', width=15).place(x=80, y=190)
+        Label(self, text="Créditos aprobados:", font=('Times New Roman',15), fg='white', bg='#294d40', width=15).place(x=80, y=540)
+        Label(self, text="Créditos asignados:", font=('Times New Roman',15), fg='white', bg='#294d40', width=15).place(x=80, y=590)
+        Label(self, text="Créditos pendientes:", font=('Times New Roman',15), fg='white', bg='#294d40', width=15).place(x=80, y=640)
         Label(self, text="Créditos hasta semestre N:", font=('Times New Roman',15), fg='white', bg='#00251a', width=25).place(x=80, y=280)
-        Label(self, text="Créditos del semestre:", font=('Times New Roman',15), fg='white', bg='#00251a', width=20).place(x=80, y=430)
-        Label(self, text="Semestre:", font=('Times New Roman',15), fg='white', bg='#00251a', width=10).place(x=80, y=340)
-        Label(self, text="Semestre:", font=('Times New Roman',15), fg='white', bg='#00251a', width=10).place(x=80, y=490)
+        Label(self, text="Créditos del semestre:", font=('Times New Roman',15), fg='white', bg='#00251a', width=20).place(x=260, y=430)
+        Label(self, text="Semestre:", font=('Times New Roman',15), fg='white', bg='#54afdc', width=10).place(x=80, y=340)
+        Label(self, text="Semestre:", font=('Times New Roman',15), fg='white', bg='#54afdc', width=10).place(x=80, y=490)
         
         
         self.creditos_aprobados = tk.StringVar()
-        self.creditos_aprobados.set("45 ")
+        self.funcion_creditos_aprobados()
         self.label_aprobados = tk.Label(self, textvariable=self.creditos_aprobados,state='disabled')
         self.label_aprobados.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
         self.label_aprobados.place(x=325,y=50)
 
         self.creditos_cursando = tk.StringVar()
-        self.creditos_cursando.set("45 ")
+        self.funcion_creditos_cursando()
         self.label_cursando = tk.Label(self, textvariable=self.creditos_cursando,state='disabled')
         self.label_cursando.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
         self.label_cursando.place(x=325,y=120)
 
         self.creditos_pendientes = tk.StringVar()
-        self.creditos_pendientes.set("77 ")
+        self.funcion_creditos_pendientes()
         self.label_pendiente = tk.Label(self, textvariable=self.creditos_pendientes,state='disabled')
         self.label_pendiente.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
         self.label_pendiente.place(x=325,y=190)
 
         self.Str_creditos_hasta = tk.StringVar()
-        self.Str_creditos_hasta.set("77 ")
+        self.Str_creditos_hasta .set('0')
         self.label_creditos_hasta = tk.Label(self, textvariable=self.Str_creditos_hasta,state='disabled')
         self.label_creditos_hasta.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
         self.label_creditos_hasta.place(x=500,y=280)
 
-        self.creditos_del_semestre = tk.StringVar()
-        self.creditos_del_semestre.set("77 ")
-        self.label_cdelsemestre = tk.Label(self, textvariable=self.creditos_del_semestre,state='disabled')
-        self.label_cdelsemestre.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
-        self.label_cdelsemestre.place(x=500,y=430)
+
+        self.creditos_aprobados2 = tk.StringVar()
+        self.creditos_aprobados2.set("0 ")
+        self.label_aprobados2 = tk.Label(self, textvariable=self.creditos_aprobados2,state='disabled')
+        self.label_aprobados2.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_aprobados2.place(x=325,y=540)
+
+        self.creditos_cursando2 = tk.StringVar()
+        self.creditos_cursando2.set("0 ")
+        self.label_cursando2 = tk.Label(self, textvariable=self.creditos_cursando2,state='disabled')
+        self.label_cursando2.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_cursando2.place(x=325,y=590)
+
+        self.creditos_pendientes2 = tk.StringVar()
+        self.creditos_pendientes2.set("0 ")
+        self.label_pendiente2 = tk.Label(self, textvariable=self.creditos_pendientes2,state='disabled')
+        self.label_pendiente2.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        self.label_pendiente2.place(x=325,y=640)
+
+        # self.creditos_del_semestre = tk.StringVar()
+        # self.creditos_del_semestre.set("77 ")
+        # self.label_cdelsemestre = tk.Label(self, textvariable=self.creditos_del_semestre,state='disabled')
+        # self.label_cdelsemestre.config(bg="#a6bdae",font=('Times New Roman',15,'bold'), fg='black')
+        # self.label_cdelsemestre.place(x=500,y=430)
 
 
-        # self.hasta_semestr=tk.StringVar()
-        self.creditos_hastasemsetre= Spinbox(self, from_=0,to=10,state='readonly',wrap=True)
+        self.str_creditos_n=tk.StringVar()
+        self.creditos_hastasemsetre= Spinbox(self, textvariable=self.str_creditos_n, from_=1,to=10,state='readonly',wrap=True)
         self.creditos_hastasemsetre.configure(font=('Times New Roman',15),width=10)
         self.creditos_hastasemsetre.place(x=300,y=340)
 
-        self.creditos_delsemsetre= Spinbox(self, from_=0,to=10,state='readonly',wrap=True)
+        self.str_creditos_del_semestre=tk.StringVar()
+        self.creditos_delsemsetre= Spinbox(self, textvariable=self.str_creditos_del_semestre, from_=1,to=10,state='readonly',wrap=True)
         self.creditos_delsemsetre.configure(font=('Times New Roman',15),width=10)
         self.creditos_delsemsetre.place(x=300,y=490)
         
 
 
         
-        Button(self, text="Contar"  ,font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=500, y=340)
-        Button(self, text="Contar"  ,font=('Times New Roman',12), fg='#000000', bg='#c7cc00', width=15, cursor='hand2' ).place(x=500, y=490)
-        Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=20, cursor='hand2' ).place(x=40, y=600)
+        Button(self, text="Contar"  ,command=self.funcion_creditos_hastaN, font=('Times New Roman',12), fg='#000000', bg='#14fc1c', width=15, cursor='hand2' ).place(x=500, y=340)
+        Button(self, text="Contar"  ,command=self.funcion_creditos_semestre, font=('Times New Roman',12), fg='#000000', bg='#14fc1c', width=15, cursor='hand2' ).place(x=500, y=490)
+        Button(self, text="Regresar",  command = self.regresar, font=('Times New Roman',15), fg='#000000', bg='#c7cc00', width=17, cursor='hand2' ).place(x=430, y=700)
         
     
+    def funcion_creditos_aprobados(self):
+        
+        suma=0
+        for dato in cursos:
+            if 0==int(dato.getEstado()):
+                
+                suma += int(dato.getCreditos())
+
+        self.creditos_aprobados.set(suma)
     
+    def funcion_creditos_cursando(self):
+        contador= 0
+        suma=0
+        for dato in cursos:
+            if 1==int(dato.getEstado()):
+                contador = contador + 1
+                suma += int(dato.getCreditos())
+
+        self.creditos_cursando.set(suma)
+    
+    def funcion_creditos_pendientes(self):
+        
+        suma=0
+        for dato in cursos:
+            if -1==int(dato.getEstado()) and int(dato.getObligatorio())==1:
+                
+                suma += int(dato.getCreditos())
+
+        self.creditos_pendientes.set(suma)
+    
+    def funcion_creditos_hastaN(self):
+        n=self.str_creditos_n.get()
+        
+        suma=0
+        for dato in cursos:
+            if  int(dato.getObligatorio())==1 and int(dato.getSemestre())<=int(n):
+                
+                suma += int(dato.getCreditos())
+
+        self.Str_creditos_hasta.set(suma)
+    
+
+    def funcion_creditos_semestre(self):
+        semestre=self.str_creditos_del_semestre.get()
+        
+        suma_aprobados=0
+        suma_pendientes=0
+        suma_asignados=0
+        for dato in cursos:
+            if  int(dato.getEstado())==0 and int(dato.getSemestre())==int(semestre):
+                suma_aprobados += int(dato.getCreditos())
+            elif  int(dato.getEstado())==-1 and int(dato.getSemestre())==int(semestre):
+                suma_pendientes += int(dato.getCreditos())
+            elif  int(dato.getEstado())==1 and int(dato.getSemestre())==int(semestre):
+                suma_asignados += int(dato.getCreditos()) 
+
+        self.creditos_aprobados2.set(suma_aprobados)
+        self.creditos_cursando2.set(suma_asignados)
+        self.creditos_pendientes2.set(suma_pendientes)
+
+
     def regresar(self):
          self.root.destroy()
          ventana_principal()
 
-ventana_principal()
+

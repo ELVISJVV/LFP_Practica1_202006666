@@ -37,7 +37,7 @@ class Curso:
     def setNombre(self, nombre):
         self.nombre = nombre
     
-    def selfPrerrequisitos(self, prerrequisitos):
+    def setPrerrequisitos(self, prerrequisitos):
         self.prerrequisitos = prerrequisitos
 
     def setObligatorio(self, obligatorio):
@@ -63,7 +63,9 @@ def Lectura(ruta):
             lineas = objeto.readlines()
             objeto.close()
         except:
-            pass
+            titulo = "Error"
+            mensaje = 'Ha ocurrido algún error con el archivo.\n Intenta ingresar otro archivo'
+            messagebox.showerror(titulo, mensaje)
         
         for linea in lineas:
             pos=-1
@@ -80,7 +82,7 @@ def Lectura(ruta):
             if pos!=-1:
                 cursos.pop(pos)
             cursos.append(curso)
-        titulo = "Agregar Curso"
+        titulo = "Agregar Cursos"
         mensaje = 'Se han agregado los cursos'
         messagebox.showinfo(titulo, mensaje)
         
