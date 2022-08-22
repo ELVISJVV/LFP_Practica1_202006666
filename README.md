@@ -3,4 +3,4 @@ Repositorio Práctica 1 del curso Lenguajes Formales y de Programación
 
 Nombre: Elvis Joseph Vásquez Villatoro
 
-Carnet: 202006666
+Carné: 202006666
