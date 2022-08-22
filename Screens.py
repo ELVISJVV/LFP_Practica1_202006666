@@ -1,14 +1,9 @@
-
-from ast import arg
-from cgitb import text
-from sre_parse import State
-
+from re import T
 from  tkinter import *
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog as FileDialog
-from tkinter.font import BOLD
 from curso import *
 
 
@@ -125,7 +120,7 @@ class CargarArchivo(tk.Frame):
     def abrir(*args):
         Fichero=FileDialog.askopenfilename(title="Selecciona el archivo")
         a=Fichero
-        print(a)
+        # print(a)
         return a
 
 # Ventana Gestionar Cursos
@@ -251,26 +246,30 @@ class AgregarCurso(tk.Frame):
         
         
         codigo=self.tk_codigo.get()
+        if codigo.isspace() == True or len(codigo)==0:
+            titulo = "Agregar Curso"
+            mensaje = 'No se llenaron los campos correctamente'
+            messagebox.showerror(titulo, mensaje)
+        else:
+            for dato in cursos:
+                # print(dato.getCodigo())
+                if codigo==dato.getCodigo():
+                    pos = cursos.index(dato)
+            if pos!=-1:
+                cursos.pop(pos)
 
-        for dato in cursos:
-            print(dato.getCodigo())
-            if codigo==dato.getCodigo():
-                pos = cursos.index(dato)
-        if pos!=-1:
-            cursos.pop(pos)
-        
-        cursos.append(curso)
-        titulo = "Agregar Curso"
-        mensaje = 'Se ha agregado el curso'
-        messagebox.showinfo(titulo, mensaje)
-        self.tk_codigo.set('')
-        self.tk_nombre.set('')
-        self.tk_prerrequisitos.set('')
-        self.tk_obligatorio.set('')
-        self.tk_semeste.set('')
-        self.tk_creditos.set('')
-        self.tk_estado.set('')
-           
+            cursos.append(curso)
+            titulo = "Agregar Curso"
+            mensaje = 'Se ha agregado el curso'
+            messagebox.showinfo(titulo, mensaje)
+            self.tk_codigo.set('')
+            self.tk_nombre.set('')
+            self.tk_prerrequisitos.set('')
+            self.tk_obligatorio.set('')
+            self.tk_semeste.set('')
+            self.tk_creditos.set('')
+            self.tk_estado.set('')
+
 
         
 
@@ -457,7 +456,7 @@ class EliminarCurso(tk.Frame):
         codigo=self.tk_codigo.get()
 
         for dato in cursos:
-            print(dato.getCodigo())
+            # print(dato.getCodigo())
             if codigo==dato.getCodigo():
                 pos = cursos.index(dato)
         if pos!=-1:
@@ -724,10 +723,10 @@ def ventana_conteo_creditos():
     root= tk.Tk()
     root.title('Conteo de Creditos')
     root.geometry('800x850+500+90')
-    # root.geometry('800x750+500+100')
     root.configure(bg='#20001a')
     root.resizable(0,0)
     app = ConteoCreditos(root = root)
+    
     
     app.mainloop()
 
@@ -825,68 +824,82 @@ class ConteoCreditos(tk.Frame):
         
     
     def funcion_creditos_aprobados(self):
-        
-        suma=0
-        for dato in cursos:
-            if 0==int(dato.getEstado()):
-                
-                suma += int(dato.getCreditos())
+        try:
+            suma=0
+            for dato in cursos:
+                if 0==int(dato.getEstado()):
 
-        self.creditos_aprobados.set(suma)
+                    suma += int(dato.getCreditos())
+
+            self.creditos_aprobados.set(suma)
+        except:
+            pass
     
     def funcion_creditos_cursando(self):
-        contador= 0
-        suma=0
-        for dato in cursos:
-            if 1==int(dato.getEstado()):
-                contador = contador + 1
-                suma += int(dato.getCreditos())
+        try:
+            contador= 0
+            suma=0
+            for dato in cursos:
+                if 1==int(dato.getEstado()):
+                    contador = contador + 1
+                    suma += int(dato.getCreditos())
 
-        self.creditos_cursando.set(suma)
+            self.creditos_cursando.set(suma)
+        except:
+            pass
     
     def funcion_creditos_pendientes(self):
-        
-        suma=0
-        for dato in cursos:
-            if -1==int(dato.getEstado()) and int(dato.getObligatorio())==1:
-                
-                suma += int(dato.getCreditos())
+        try:
+            suma=0
+            for dato in cursos:
+                if -1==int(dato.getEstado()) and int(dato.getObligatorio())==1:
 
-        self.creditos_pendientes.set(suma)
-    
+                    suma += int(dato.getCreditos())
+
+            self.creditos_pendientes.set(suma)
+        except:
+            pass
+
     def funcion_creditos_hastaN(self):
-        n=self.str_creditos_n.get()
         
-        suma=0
-        for dato in cursos:
-            if  int(dato.getObligatorio())==1 and int(dato.getSemestre())<=int(n):
-                
-                suma += int(dato.getCreditos())
+        try:
+            n=self.str_creditos_n.get()
 
-        self.Str_creditos_hasta.set(suma)
-    
+            suma=0
+            for dato in cursos:
+                if  int(dato.getObligatorio())==1 and int(dato.getSemestre())<=int(n):
+
+                    suma += int(dato.getCreditos())
+
+            self.Str_creditos_hasta.set(suma)
+        except:
+            pass
 
     def funcion_creditos_semestre(self):
-        semestre=self.str_creditos_del_semestre.get()
         
-        suma_aprobados=0
-        suma_pendientes=0
-        suma_asignados=0
-        for dato in cursos:
-            if  int(dato.getEstado())==0 and int(dato.getSemestre())==int(semestre):
-                suma_aprobados += int(dato.getCreditos())
-            elif  int(dato.getEstado())==-1 and int(dato.getSemestre())==int(semestre):
-                suma_pendientes += int(dato.getCreditos())
-            elif  int(dato.getEstado())==1 and int(dato.getSemestre())==int(semestre):
-                suma_asignados += int(dato.getCreditos()) 
+        try:
+            semestre=self.str_creditos_del_semestre.get()
 
-        self.creditos_aprobados2.set(suma_aprobados)
-        self.creditos_cursando2.set(suma_asignados)
-        self.creditos_pendientes2.set(suma_pendientes)
+            suma_aprobados=0
+            suma_pendientes=0
+            suma_asignados=0
+            for dato in cursos:
+                if  int(dato.getEstado())==0 and int(dato.getSemestre())==int(semestre):
+                    suma_aprobados += int(dato.getCreditos())
+                elif  int(dato.getEstado())==-1 and int(dato.getSemestre())==int(semestre):
+                    suma_pendientes += int(dato.getCreditos())
+                elif  int(dato.getEstado())==1 and int(dato.getSemestre())==int(semestre):
+                    suma_asignados += int(dato.getCreditos()) 
 
+            self.creditos_aprobados2.set(suma_aprobados)
+            self.creditos_cursando2.set(suma_asignados)
+            self.creditos_pendientes2.set(suma_pendientes)
+        except:
+            pass
 
     def regresar(self):
          self.root.destroy()
          ventana_principal()
-
+    
+# funcion para colocar icono
 
